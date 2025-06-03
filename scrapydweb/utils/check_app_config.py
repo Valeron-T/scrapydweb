@@ -64,6 +64,7 @@ def check_app_config(config):
 
     # ScrapydWeb
     check_assert('SCRAPYDWEB_BIND', '0.0.0.0', str, non_empty=True)
+    check_assert('SCRAPYDWEB_PATH', '', str)
     SCRAPYDWEB_PORT = config.setdefault('SCRAPYDWEB_PORT', 5000)
     try:
         assert not isinstance(SCRAPYDWEB_PORT, bool)
@@ -92,7 +93,8 @@ def check_app_config(config):
     _protocol = 'https' if config.get('ENABLE_HTTPS', False) else 'http'
     _bind = config.get('SCRAPYDWEB_BIND', '0.0.0.0')
     _bind = '127.0.0.1' if _bind == '0.0.0.0' else _bind
-    config['URL_SCRAPYDWEB'] = '%s://%s:%s' % (_protocol, _bind, config.get('SCRAPYDWEB_PORT', 5000))
+    _path = config.get('SCRAPYDWEB_PATH', '')
+    config['URL_SCRAPYDWEB'] = '%s://%s:%s%s' % (_protocol, _bind, config.get('SCRAPYDWEB_PORT', 5000), _path)
     handle_metadata('url_scrapydweb', config['URL_SCRAPYDWEB'])
     logger.info("Setting up URL_SCRAPYDWEB: %s", config['URL_SCRAPYDWEB'])
 

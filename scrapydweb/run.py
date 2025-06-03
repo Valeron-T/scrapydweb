@@ -15,6 +15,8 @@ from scrapydweb.common import authenticate, find_scrapydweb_settings_py, handle_
 from scrapydweb.vars import ROOT_DIR, SCRAPYDWEB_SETTINGS_PY, SCHEDULER_STATE_DICT, STATE_PAUSED, STATE_RUNNING
 from scrapydweb.utils.check_app_config import check_app_config
 
+from werkzeug.middleware.dispatcher import DispatcherMiddleware
+from werkzeug.serving import run_simple
 
 logger = logging.getLogger(__name__)
 apscheduler_logger = logging.getLogger('apscheduler')
@@ -111,12 +113,28 @@ def main():
         protocol = 'http'
         context = None
 
-    print("{star}Visit ScrapydWeb at {protocol}://127.0.0.1:{port} "
+    print("{star}Visit ScrapydWeb at {protocol}://127.0.0.1:{port}{path} "
           "or {protocol}://IP-OF-THE-CURRENT-HOST:{port}{star}\n".format(
-           star=STAR, protocol=protocol, port=app.config['SCRAPYDWEB_PORT']))
+           star=STAR, protocol=protocol, port=app.config['SCRAPYDWEB_PORT'], path=app.config['SCRAPYDWEB_PATH']))
     logger.info("For running Flask in production, check out http://flask.pocoo.org/docs/1.0/deploying/")
     apscheduler_logger.setLevel(logging.DEBUG)
-    app.run(host=app.config['SCRAPYDWEB_BIND'], port=app.config['SCRAPYDWEB_PORT'],
+    
+    if app.config['SCRAPYDWEB_PATH'] != '':
+        # Wrap with DispatcherMiddleware to support subpath deployment
+        application = DispatcherMiddleware(None, {
+            app.config['SCRAPYDWEB_PATH']: app
+        })
+
+        # Run the application
+        run_simple(
+            app.config['SCRAPYDWEB_BIND'],
+            app.config['SCRAPYDWEB_PORT'],
+            application,
+            use_reloader=False,
+            ssl_context=context
+        )
+    else:
+        app.run(host=app.config['SCRAPYDWEB_BIND'], port=app.config['SCRAPYDWEB_PORT'],
             ssl_context=context, use_reloader=False)
 
 

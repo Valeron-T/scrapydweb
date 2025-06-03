@@ -58,6 +58,7 @@ class SettingsView(BaseView):
         self.kwargs['scrapydweb_server'] = self.json_dumps(dict(
             SCRAPYDWEB_BIND=self.SCRAPYDWEB_BIND,
             SCRAPYDWEB_PORT=self.SCRAPYDWEB_PORT,
+            SCRAPYDWEB_PATH=self.SCRAPYDWEB_PATH,
             URL_SCRAPYDWEB=self.URL_SCRAPYDWEB,
             ENABLE_AUTH=self.ENABLE_AUTH,
             USERNAME=self.protect(self.USERNAME),

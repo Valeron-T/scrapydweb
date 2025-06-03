@@ -235,7 +235,7 @@ def test_poll_py(app):
     _bind = app.config.get('SCRAPYDWEB_BIND', '0.0.0.0')
     _bind = '127.0.0.1' if _bind == '0.0.0.0' else _bind
     args = [
-        'http://%s:%s' % (_bind, app.config.get('SCRAPYDWEB_PORT', 5000)),
+        'http://%s:%s%s' % (_bind, app.config.get('SCRAPYDWEB_PORT', 5000), app.config.get('SCRAPYDWEB_PATH', '')),
         app.config.get('USERNAME', '') if app.config.get('ENABLE_AUTH', False) else '',
         app.config.get('PASSWORD', '') if app.config.get('ENABLE_AUTH', False) else '',
         json.dumps(app.config.get('SCRAPYD_SERVERS', ['127.0.0.1'])),

@@ -81,6 +81,7 @@ class BaseView(View):
         # ScrapydWeb
         self.SCRAPYDWEB_BIND = app.config.get('SCRAPYDWEB_BIND', '0.0.0.0')
         self.SCRAPYDWEB_PORT = app.config.get('SCRAPYDWEB_PORT', 5000)
+        self.SCRAPYDWEB_PATH = app.config.get('SCRAPYDWEB_PATH', '')
 
         self.ENABLE_AUTH = app.config.get('ENABLE_AUTH', False)
         self.USERNAME = app.config.get('USERNAME', '')
